@@ -67,9 +67,9 @@
         let view = new MapView({
           container: "viewDiv",
           map: webmap,
-          popup: {
-            autoOpenEnabled: false
-          } //disable popups
+          //popup: {
+          //  autoOpenEnabled: false
+          //} //disable popups
         });
 
         view.when(function() {
@@ -186,8 +186,8 @@
       <div id="tableDiv"></div>
     </div>
     <div id="actions" class="esri-widget">
-      <button class="esri-button" id="zoom">Zoom to selected feature</button>
-      <button class="esri-button" id="fullextent">Full extent</button>
+      <button class="esri-button" id="zoom">Zoom to selected run</button>
+      <button class="esri-button" id="fullextent">World extent</button>
     </div>
   </body>
 </html>
