@@ -60,7 +60,7 @@
         const highlights = [];
         const webmap = new WebMap({
           portalItem: {
-            id: "3c245fe893234d4f85e4edaa41a9e0bf"
+            id: "e598cee9cc094539a5d496902023c998"  // "3c245fe893234d4f85e4edaa41a9e0bf"
           }
         });
 
@@ -82,29 +82,18 @@
             // Autocast the FieldColumnConfigs
             fieldConfigs: [
               {
-                name: "RECAREANAM",
-                label: "Recreation area name"
+                name: "Participant_nickname",
+                label: "Runner"
               },
               {
-                name: "FORESTNAME",
-                label: "Forest name",
-                direction: "asc"
+                name: "Track_Length_KM",
+                label: "Distance (km)",
+                direction: "desc"
               },
               {
-                name: "OPENSTATUS",
-                label: "Open status"
-              },
-              {
-                name: "OPEN_SEASO",
-                label: "Season begins"
-              },
-              {
-                name: "RECAREADES",
-                label: "Recreation description"
-              },
-              {
-                name: "RESTRICTIO",
-                label: "Restrictions"
+                name: "Track_Length_Miles",
+                label: "Distance (mi)",
+                direction: "desc"
               }
             ],
             container: document.getElementById("tableDiv")
