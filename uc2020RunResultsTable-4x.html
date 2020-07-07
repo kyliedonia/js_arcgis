@@ -72,7 +72,7 @@
             dockOptions: {
               buttonEnabled: false,
               breakpoint: false,
-              position: bottom-right
+              position: "bottom-right"
             }
           } //to disable popups: set autoOpenEnabled parameter under popup to false
         });
@@ -118,7 +118,7 @@
           view.ui.add(document.getElementById("actions"), "top-right");
           
           // Select the first record
-          /////////featureTable.selectRows(0);
+          featureTable.selectRows(0);
 
           // Get the FeatureLayer's layerView and listen for the table's selection-change event
           view.whenLayerView(featureLayer).then(function(layerView) {
