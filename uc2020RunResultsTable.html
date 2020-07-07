@@ -53,11 +53,11 @@
         function loadTable(){
 
           // Create the feature layer
-          myFeatureLayer = new FeatureLayer("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Warren_College_Trees/FeatureServer/0", {
+          myFeatureLayer = new FeatureLayer("https://services2.arcgis.com/AhLa5Lu7BoubUElN/arcgis/rest/services/Fun_Run_(Dashboard_and_Stats_View)/FeatureServer/1", {
             mode: FeatureLayer.MODE_ONDEMAND,
             visible: true,
              outFields: [
-              "Collected", "Status", "Spp_Code", "Height", "Cmn_Name", "Sci_Name", "Street", "Native"
+              "Participant_nickname", "StartTime", "Track_Elapsed_Seconds", "Track_Length_KM", "Track_Length_Miles", "Average_Speed_MPH", "Average_Speed_KMPH", "Elevation_Gain_Meters", "Elevation_Gain_Feet", "Pace_MI", "Pace_KM"
             ],
             id: "fLayer"
           });
@@ -74,21 +74,17 @@
 
           myFeatureTable = new FeatureTable({
             "featureLayer" : myFeatureLayer,
-            "outFields": [
-              "Collected", "Spp_Code", "Height", "Cmn_Name", "Sci_Name", "Native"
-            ],
+            //"outFields": [
+            //  "Collected", "Spp_Code", "Height", "Cmn_Name", "Sci_Name", "Native"
+            //],
             fieldInfos: [
               {
-                name: 'Spp_Code', 
-                alias: 'Species Code', 
+                name: 'Participant_nickname', 
+                alias: 'Participant', 
               },
               {
-                name: 'Cmn_Name', 
-                alias: 'Common Name',
-              },
-              {
-                name: 'Sci_Name', 
-                alias: 'Scientific Name',
+                name: 'StartTime', 
+                alias: 'Start time',
               }
             ],
             "map" : map
