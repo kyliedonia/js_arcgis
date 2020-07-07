@@ -6,12 +6,7 @@
       name="viewport"
       content="initial-scale=1, maximum-scale=1,user-scalable=no"
     />
-    <!--
-  ArcGIS API for JavaScript, https://js.arcgis.com
-  For more information about the widgets-featuretable-map sample, read the original sample description at developers.arcgis.com.
-  https://developers.arcgis.com/javascript/latest/sample-code/widgets-featuretable-map/index.html
-  -->
-<title>Results - Esri UC Virtual Run/Walk</title>
+    <title>FeatureTable widget with a map - 4.15</title>
 
     <link
       rel="stylesheet"
@@ -63,30 +58,12 @@
         Multipoint
       ) {
         const highlights = [];
-        
-        /* from 4.x sample
         const webmap = new WebMap({
           portalItem: {
             id: "3c245fe893234d4f85e4edaa41a9e0bf"
           }
         });
-        */
-        
-        // Create the feature layer
-        var myFeatureLayer = new FeatureLayer("https://services2.arcgis.com/AhLa5Lu7BoubUElN/arcgis/rest/services/Fun_Run_(Dashboard_and_Stats_View)/FeatureServer/1", {
-            mode: FeatureLayer.MODE_ONDEMAND,
-            visible: true,
-             outFields: [
-              "Participant_nickname", "StartTime", "Track_Elapsed_Seconds", "Track_Length_KM", "Track_Length_Miles", "Average_Speed_MPH", "Average_Speed_KMPH", "Elevation_Gain_Meters", "Elevation_Gain_Feet", "Pace_MI", "Pace_KM"
-            ],
-            id: "fLayer"
-        });
-        
-        var webmap = new Map("map",{
-          basemap: "dark-gray",
-          layers: [myFeatureLayer]
-        });
-        
+
         let view = new MapView({
           container: "viewDiv",
           map: webmap,
@@ -105,12 +82,29 @@
             // Autocast the FieldColumnConfigs
             fieldConfigs: [
               {
-                name: 'Participant_nickname', 
-                alias: 'Participant', 
+                name: "RECAREANAM",
+                label: "Recreation area name"
               },
               {
-                name: 'StartTime', 
-                alias: 'Start time',
+                name: "FORESTNAME",
+                label: "Forest name",
+                direction: "asc"
+              },
+              {
+                name: "OPENSTATUS",
+                label: "Open status"
+              },
+              {
+                name: "OPEN_SEASO",
+                label: "Season begins"
+              },
+              {
+                name: "RECAREADES",
+                label: "Recreation description"
+              },
+              {
+                name: "RESTRICTIO",
+                label: "Restrictions"
               }
             ],
             container: document.getElementById("tableDiv")
