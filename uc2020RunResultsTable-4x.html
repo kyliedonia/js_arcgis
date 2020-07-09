@@ -41,6 +41,7 @@
         "esri/views/MapView",
         "esri/layers/FeatureLayer",
         "esri/widgets/FeatureTable",
+	"esri/widgets/Home",
         "esri/geometry/Point",
         "esri/geometry/Multipoint"
       ], function(
@@ -49,6 +50,7 @@
         MapView,
         FeatureLayer,
         FeatureTable,
+	Home,
         Point,
         Multipoint
       ) {
@@ -71,6 +73,13 @@
             }
           } //to disable popups: set autoOpenEnabled parameter under popup to false
         });
+	
+	var homeBtn = new Home({
+          view: view
+	});
+
+        // Add the home button to the top left corner of the view
+        view.ui.add(homeBtn, "top-left");
 
         // When view is ready, find feature layer and set title and outFields
         view.when(function() {
