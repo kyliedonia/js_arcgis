@@ -37,7 +37,7 @@
     <script>
       require([
         "esri/WebMap",
-		"esri/core/watchUtils",
+	"esri/core/watchUtils",
         "esri/views/MapView",
         "esri/layers/FeatureLayer",
         "esri/widgets/FeatureTable",
@@ -46,7 +46,7 @@
         "esri/geometry/Multipoint"
       ], function(
         WebMap,
-		watchUtils,
+	watchUtils,
         MapView,
         FeatureLayer,
         FeatureTable,
@@ -155,20 +155,9 @@
 			}
   		  });
 		  // done formatting columns
-		  
-		//  watchUtils.watch(featureTable, "rows.length", function(length) {
-		//    if (length) {
-		//	  featureTable.rows[0].select
-		//	}
-		//  }
-
-        //  featureTable.rows[0].select
-
+		
           // Add buttons to the mapView
           view.ui.add(document.getElementById("actions"), "top-right");
-          
-          // Select the first record
-     //     featureTable.selectRows(0);
 
           // Get the FeatureLayer's layerView and listen for the table's selection-change event
           view.whenLayerView(featureLayer).then(function(layerView) {
@@ -198,15 +187,19 @@
             const zoomBtn = document.getElementById("zoom");
             const fastestBtn = document.getElementById("fastest");
             const longestBtn = document.getElementById("longest");
-            const timeTotalBtn = document.getElementById("timeTotal");
-            const distanceTotalBtn = document.getElementById("distanceTotal");
+            //const timeTotalBtn = document.getElementById("timeTotal");
+            //const distanceTotalBtn = document.getElementById("distanceTotal");
+            const metricUnitsBtn = document.getElementById("metricUnits");
+            const imperialUnitsBtn = document.getElementById("imperialUnits");
 
             // Wire up button click event listeners
             zoomBtn.addEventListener("click", zoomToSelectedFeature);
             fastestBtn.addEventListener("click", showFastestResults);
             longestBtn.addEventListener("click", showLongestResults);
-            timeTotalBtn.addEventListener("click", showTimeTotalResults);
-            distanceTotalBtn.addEventListener("click", showDistanceTotalResults);
+            //timeTotalBtn.addEventListener("click", showTimeTotalResults);
+            //distanceTotalBtn.addEventListener("click", showDistanceTotalResults);
+            metricUnitsBtn.addEventListener("click", changeUnits);
+            imperialUnitsBtn.addEventListener("click", changeUnits);
 		  
             // fires when "Zoom to selected feature" button is clicked
             function zoomToSelectedFeature() {
@@ -233,18 +226,20 @@
             // Fires when "fastest" button is clicked
             function showFastestResults() {
               // Sorts the table by speed and limits to runs over 5000km
-	      alert("HI!");
-              featureTable.sortColumn("Pace_KM", "desc");
+	      if (metricUnitsBtn.checked) {
+                featureTable.sortColumn("Average_Speed_KMPH", "desc");
+              } else {
+                featureTable.sortColumn("Average_Speed_MPH", "desc");
+              }
             }
 			
 	    // Fires when "longest" button is clicked
             function showLongestResults() {
-              // Sorts the table by distance
-              view.goTo(featureLayer.fullExtent).catch(function(error) {
-                if (error.name != "AbortError") {
-                  console.error(error);
-                }
-              });
+              if (metricUnitsBtn.checked) {
+                featureTable.sortColumn("Track_Length_KM", "desc");
+              } else {
+                featureTable.sortColumn("Track_Length_Miles", "desc");
+              }
             }
 			
 	    // Fires when "timeTotal" button is clicked
@@ -266,6 +261,33 @@
                 }
               });
             }
+		  
+
+			
+            //Change units used in display 
+            //  - Show distance, speed, and pace in km, elevation in m
+            //  - Show distance, speed, and pace in mi, elevation in ft
+            function changeUnits() {
+              if (metricUnitsBtn.checked) {
+                featureTable.showColumn("Track_Length_KM");
+                featureTable.showColumn("Average_Speed_KMPH");
+                featureTable.showColumn("Pace_KM");
+                featureTable.showColumn("Elevation_Gain_Meters");
+                featureTable.hideColumn("Track_Length_Miles");
+                featureTable.hideColumn("Average_Speed_MPH");
+                featureTable.hideColumn("Pace_MI");
+                featureTable.hideColumn("Elevation_Gain_Feet");
+              } else {
+                featureTable.hideColumn("Track_Length_KM");
+                featureTable.hideColumn("Average_Speed_KMPH");
+                featureTable.hideColumn("Pace_KM");
+                featureTable.hideColumn("Elevation_Gain_Meters");
+                featureTable.showColumn("Track_Length_Miles");
+                featureTable.showColumn("Average_Speed_MPH");
+                featureTable.showColumn("Pace_MI");
+                featureTable.showColumn("Elevation_Gain_Feet");
+              }
+            }		  
           });
         });
       });
@@ -279,17 +301,17 @@
     </div>
     <div id="actions" class="esri-widget">
       <button class="esri-button" id="zoom">Zoom to selected run</button>
-      <!--
       <h4>Results</h4>
       <button class="esri-button" id="fastest">Fastest 5k+ run results</button>
       <button class="esri-button" id="longest">Longest run results</button>
-      <button class="esri-button" id="timeTotal">Time on feet results</button>
-      <button class="esri-button" id="distanceTotal">Total distance results</button>
-      -->
-      <!--div>
-        <input type="radio" id="mi" name="gender" value="miles"><label for="mi">mi</label>
-        <input type="radio" id="km" name="gender" value="km"><label for="km">km</label>
-      </div-->
+      <!--button class="esri-button" id="timeTotal">Time on feet results</button>
+      <button class="esri-button" id="distanceTotal">Total distance results</button-->
+	  
+      <h4>Units</h4>
+      <input type="radio" id="metricUnits" name="units" value="km" checked >
+      <label for="metricUnits">km</label>
+      <input type="radio" id="imperialUnits" name="units" value="mi" >
+      <label for="imperialUnits">mi</label>
     </div>
   </body>
 </html>
