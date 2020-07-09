@@ -148,21 +148,21 @@
                 if (item.path !== "Participant_nickname") {
                   item.textAlign = "end";
                 }
-                if (item.path === "Elevation_Gain_Meters") {
+                if (item.path === "Elevation_Gain_Meters" || item.path === "Elevation_Gain_Feet") {
                   item.cellValueFormatFunction = function(params) {
                     return Math.round(params.value).toString();
                   };
-                } else if (item.path === "Track_Length_KM") {
+                } else if (item.path === "Track_Length_KM" || item.path === "Track_Length_Miles") {
                   item.cellValueFormatFunction = function(params) {
                     let value = Math.round(10 * params.value) / 10;
                     return value ? value.toFixed(1).toString() : null;
                   };
-                } else if (item.path === "Average_Speed_KMPH") {
+                } else if (item.path === "Average_Speed_KMPH" || item.path === "Average_Speed_MPH") {
                   item.cellValueFormatFunction = function(params) {
                     var value = Math.round(100 * params.value) / 100;
                     return value ? value.toFixed(2).toString() : null;
                   };
-                } else if (item.path === "Pace_KM") {
+                } else if (item.path === "Pace_KM" || item.path === "Pace_MI") {
                   item.cellValueFormatFunction = function(params) {
                     var minutes = params.value;
                     var pacemin = Math.floor(minutes);
