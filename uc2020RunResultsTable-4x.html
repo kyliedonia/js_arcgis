@@ -1,16 +1,10 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="initial-scale=1, maximum-scale=1,user-scalable=no"
-    />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
     <title>Results - Esri UC Virtual Run/Walk 2020</title>
 
-    <link
-      rel="stylesheet"
-      href="https://js.arcgis.com/4.16/esri/themes/light/main.css"
-    />
+    <link rel="stylesheet" href="https://js.arcgis.com/4.16/esri/themes/light/main.css" />
     <script src="https://js.arcgis.com/4.16/"></script>
 
     <style>
@@ -43,6 +37,7 @@
     <script>
       require([
         "esri/WebMap",
+		"esri/core/watchUtils",
         "esri/views/MapView",
         "esri/layers/FeatureLayer",
         "esri/widgets/FeatureTable",
@@ -50,6 +45,7 @@
         "esri/geometry/Multipoint"
       ], function(
         WebMap,
+		watchUtils,
         MapView,
         FeatureLayer,
         FeatureTable,
@@ -59,7 +55,7 @@
         const highlights = [];
         const webmap = new WebMap({
           portalItem: {
-            id: "e598cee9cc094539a5d496902023c998"  
+            id: "e598cee9cc094539a5d496902023c998"
           }
         });
 
@@ -109,15 +105,61 @@
                 name: "Elevation_Gain_Meters",
                 label: "Elevation gain (m)"
               }
-            ],
+            ], 
             container: document.getElementById("tableDiv")
           });
+		  
+		  // Format the columns of results
+		  watchUtils.watch(featureTable, "columns.length", function(length) {
+		    if (length) {
+			  featureTable.columns.items.forEach((item) => {
+			    // Target a specific column
+				if (item.path !== "Participant_nickname") {
+				  item.textAlign = "end";
+				}
+				if (item.path === "Elevation_Gain_Meters") {
+				  item.cellValueFormatFunction = function(params) {
+				    return Math.round(params.value).toString();
+				  };
+				} else if (item.path === "Track_Length_KM") {
+				  item.cellValueFormatFunction = function(params) {
+				    let value = Math.round(10 * params.value) / 10;
+					return value ? value.toFixed(1).toString() : null;
+				  };
+				} else if (item.path === "Average_Speed_KMPH") {
+				  item.cellValueFormatFunction = function(params) {
+				    var value = Math.round(100 * params.value) / 100;
+					return value ? value.toFixed(2).toString() : null;
+				  };
+				} else if (item.path === "Pace_KM") {
+				  item.cellValueFormatFunction = function(params) {
+				    var minutes = params.value;
+					var pacemin = Math.floor(minutes);
+					var pacesec = Math.round(60 * (minutes - pacemin)).toString().padStart(2, '0');;
+					var prettyPace = pacemin + ":" + pacesec;
+					return prettyPace ? prettyPace : null;
+				  };
+				} else {
+				  console.log("nope", item.path);
+				}
+			  });
+			}
+  		  });
+		  // done formatting columns
+		  
+		//  watchUtils.watch(featureTable, "rows.length", function(length) {
+		//    if (length) {
+		//	  featureTable.rows[0].select
+		//	}
+		//  }
+
+        //  featureTable.rows[0].select
 
           // Add buttons to the mapView
           view.ui.add(document.getElementById("actions"), "top-right");
           
           // Select the first record
-          featureTable.selectRows(0);
+     //     featureTable.selectRows(0);
 
           // Get the FeatureLayer's layerView and listen for the table's selection-change event
           view.whenLayerView(featureLayer).then(function(layerView) {
@@ -195,6 +237,10 @@
     <div id="actions" class="esri-widget">
       <button class="esri-button" id="zoom">Zoom to selected run</button>
       <button class="esri-button" id="fullextent">World extent</button>
+	  <div>
+	    <input type="radio" id="mi" name="gender" value="miles"><label for="mi">mi</label>
+		<input type="radio" id="km" name="gender" value="km"><label for="km">km</label>
+	  </div>
     </div>
   </body>
 </html>
