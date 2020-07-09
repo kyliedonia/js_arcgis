@@ -196,12 +196,18 @@
             });
 
             const zoomBtn = document.getElementById("zoom");
-            const fullExtentBtn = document.getElementById("fullextent");
+            const fastestBtn = document.getElementById("fastest");
+            const longestBtn = document.getElementById("longest");
+            const timeTotalBtn = document.getElementById("timeTotal");
+            const distanceTotalBtn = document.getElementById("distanceTotal");
 
             // Wire up button click event listeners
             zoomBtn.addEventListener("click", zoomToSelectedFeature);
-            fullExtentBtn.addEventListener("click", fullExtent);
-
+            fastestBtn.addEventListener("click", showFastestResults);
+            longestBtn.addEventListener("click", showLongestResults);
+            timeTotalBtn.addEventListener("click", showTimeTotalResults);
+            distanceTotalBtn.addEventListener("click", showDistanceTotalResults);
+		  
             // fires when "Zoom to selected feature" button is clicked
             function zoomToSelectedFeature() {
               // Create a query off of the feature layer
@@ -223,9 +229,37 @@
                 });
               });
             }
-            // Fires when "Full extent" button is clicked
-            function fullExtent() {
-              // Zooms to the full extent of the feature layer
+		  
+            // Fires when "fastest" button is clicked
+            function showFastestResults() {
+              // Sorts the table by speed and limits to runs over 5000km
+	      alert("HI!");
+              featureTable.sortColumn("Pace_KM", "desc");
+            }
+			
+	    // Fires when "longest" button is clicked
+            function showLongestResults() {
+              // Sorts the table by distance
+              view.goTo(featureLayer.fullExtent).catch(function(error) {
+                if (error.name != "AbortError") {
+                  console.error(error);
+                }
+              });
+            }
+			
+	    // Fires when "timeTotal" button is clicked
+            function showTimeTotalResults() {
+              // Sorts the table by distance
+              view.goTo(featureLayer.fullExtent).catch(function(error) {
+                if (error.name != "AbortError") {
+                  console.error(error);
+                }
+              });
+            }
+			
+	    // Fires when "distanceTotal" button is clicked
+            function showDistanceTotalResults() {
+              // Sorts the table by distance
               view.goTo(featureLayer.fullExtent).catch(function(error) {
                 if (error.name != "AbortError") {
                   console.error(error);
@@ -245,7 +279,13 @@
     </div>
     <div id="actions" class="esri-widget">
       <button class="esri-button" id="zoom">Zoom to selected run</button>
-      <button class="esri-button" id="fullextent">World extent</button>
+      <!--
+      <h4>Results</h4>
+      <button class="esri-button" id="fastest">Fastest 5k+ run results</button>
+      <button class="esri-button" id="longest">Longest run results</button>
+      <button class="esri-button" id="timeTotal">Time on feet results</button>
+      <button class="esri-button" id="distanceTotal">Total distance results</button>
+      -->
       <!--div>
         <input type="radio" id="mi" name="gender" value="miles"><label for="mi">mi</label>
         <input type="radio" id="km" name="gender" value="km"><label for="km">km</label>
