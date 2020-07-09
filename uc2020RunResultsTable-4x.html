@@ -215,7 +215,7 @@
             const imperialUnitsBtn = document.getElementById("imperialUnits");
 
             // Wire up button click event listeners
-            zoomBtn.addEventListener("click", zoomToSelectedFeature);
+            zoomBtn.addEventListener("click", zoomToSelectedRun);
             fastestBtn.addEventListener("click", showFastestResults);
             longestBtn.addEventListener("click", showLongestResults);
             //timeTotalBtn.addEventListener("click", showTimeTotalResults);
@@ -224,7 +224,7 @@
             imperialUnitsBtn.addEventListener("click", changeUnits);
 		  
             // fires when "Zoom to selected feature" button is clicked
-            function zoomToSelectedFeature() {
+            function zoomToSelectedRun() {
               // Create a query off of the feature layer
               const query = featureLayer.createQuery();
               // Iterate through the highlights and grab the feature's objectID
