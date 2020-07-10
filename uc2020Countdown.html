@@ -7,7 +7,7 @@
     
     <script>
       // Set the date we're counting down to
-      var countDownDate = new Date("July 13, 2020 00:00:01").getTime();
+      var countDownDate = new Date("July 10, 2020 00:00:01").getTime();
 
       // Update the count down every 1 second
       var x = setInterval(function() {
@@ -30,12 +30,13 @@
         // If the count down is finished, write some text
         if (distance < 0) {
           clearInterval(x);
-          document.getElementById("demo").innerHTML = "EXPIRED";
+          document.getElementById("demo").innerHTML = "GO!!!";
         }
       }, 1000);
     </script>
   </head>
   <body>
+    <p>On your mark... Get set...</p>
     <!-- Display the countdown timer in an element -->
     <p id="demo"></p>
   </body>
