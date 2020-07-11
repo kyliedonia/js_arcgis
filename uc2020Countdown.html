@@ -7,7 +7,7 @@
     
     <script>
       // Set the date we're counting down to
-      var countDownDate = new Date("July 10, 2020 16:44:00").getTime();
+      var countDownDate = new Date("July 13, 2020 00:00:00").getTime();
 
       // Update the count down every 1 second
       var x = setInterval(function() {
@@ -34,10 +34,25 @@
         }
       }, 1000);
     </script>
+    <style>
+      body {
+        font-family: "Avenir Next", "Avenir Next";
+        font-size: 20px;
+        font-weight: 400;
+        text-rendering: optimizelegibility;
+        text-size-adjust: 100%
+        visibility: visible;
+        white-space: nowrap;
+        color: white;
+        background-color: black;
+      }
+      #demo {
+        color: #fdc745;
+        font-size: 22px;
+      }
+    </style>
   </head>
   <body>
-    <p>On your mark... Get set...</p>
-    <!-- Display the countdown timer in an element -->
-    <p id="demo"></p>
+    <p>On your mark... get set... <span id="demo"></div></p>
   </body>
 </html>
