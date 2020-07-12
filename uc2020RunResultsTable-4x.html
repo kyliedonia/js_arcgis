@@ -1,257 +1,251 @@
-
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
-    <title>Results - Esri UC Virtual Run/Walk 2020</title>
 
-    <link rel="stylesheet" href="https://js.arcgis.com/4.16/esri/themes/light/main.css" />
-    <script src="https://js.arcgis.com/4.16/"></script>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+  <title>Results - Esri UC Virtual Run/Walk 2020</title>
 
-    <style>
-      html,
-      body {
-        height: 100%;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-      }
-      .esri-button {
-        width: 200px;
-      }
-      .units {
-        width: 220px;
-        right: 0px;
-        float: right;
-      }
-      #actions {
-        padding: 5px;
-      }
+  <link rel="stylesheet" href="https://js.arcgis.com/4.16/esri/themes/light/main.css" />
+  <script src="https://js.arcgis.com/4.16/"></script>
 
-      .container {
-        height: 70%;
-        width: 100%;
-      }
-    </style>
-    <script>
-      require([
-        "esri/WebMap",
-        "esri/core/watchUtils",
-        "esri/views/MapView",
-        "esri/layers/FeatureLayer",
-        "esri/widgets/FeatureTable",
-        "esri/widgets/Home",
-        "esri/geometry/Point",
-        "esri/geometry/Multipoint"
-      ], function(
-        WebMap,
-        watchUtils,
-        MapView,
-        FeatureLayer,
-        FeatureTable,
-        Home,
-        Point,
-        Multipoint
-      ) {
+  <style>
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .esri-button {
+      width: 200px;
+    }
+
+    .units {
+      width: 220px;
+      right: 0px;
+      float: right;
+    }
+
+    #actions {
+      padding: 5px;
+    }
+
+    .container {
+      height: 70%;
+      width: 100%;
+    }
+  </style>
+  <script>
+    require([
+      "esri/WebMap",
+      "esri/core/watchUtils",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/widgets/FeatureTable",
+      "esri/widgets/Home",
+      "esri/geometry/Point",
+      "esri/geometry/Multipoint"
+    ], function(
+      WebMap,
+      watchUtils,
+      MapView,
+      FeatureLayer,
+      FeatureTable,
+      Home,
+      Point,
+      Multipoint
+    ) {
       const featureLayer = new FeatureLayer({
         url: "https://services2.arcgis.com/AhLa5Lu7BoubUElN/arcgis/rest/services/Fun_Run_(Dashboard_and_Stats_View)/FeatureServer/1"
       });
       featureLayer.outFields = ["*"];
       featureLayer.title = "Results";
-        
-          // Create the feature table
-          const featureTable = new FeatureTable({
-            layer: featureLayer,
-            // Autocast the FieldColumnConfigs
-            fieldConfigs: [
-              {
-                name: "Participant_nickname",
-                label: "Runner"
-              },
-              {
-                name: "Track_Length_KM",
-                label: "Distance (km)",
-                direction: "desc"
-              },
-              {
-                name: "Average_Speed_KMPH",
-                label: "Speed (km/h)"
-              },
-              { 
-                name: "Pace_KM",
-                label: "Pace (min/km)"
-              },
-              {
-                name: "Elevation_Gain_Meters",
-                label: "Elevation gain (m)"
-              },
-              {
-                name: "Track_Length_Miles",
-                label: "Distance (mi)",
-                direction: "desc",
-                visible: false
-              },
-              {
-                name: "Average_Speed_MPH",
-                label: "Speed (MPH)",
-                visible: false
-              },
-              { 
-                name: "Pace_MI",
-                label: "Pace (min/mi)",
-                visible: false
-              },
-              {
-                name: "Elevation_Gain_Feet",
-                label: "Elevation gain (ft)",
-                visible: false
-              }
-            ], 
-            container: document.getElementById("tableDiv")
-          });
-		  
-          // Format the columns of results
-          watchUtils.watch(featureTable, "columns.length", function(length) {
-            if (length) {
-              featureTable.columns.items.forEach((item) => {
-                // Target a specific column
-                if (item.path !== "Participant_nickname") {
-                  item.textAlign = "end";
-                }
-                if (item.path === "Elevation_Gain_Meters" || item.path === "Elevation_Gain_Feet") {
-                  item.cellValueFormatFunction = function(params) {
-                    return Math.round(params.value).toString();
-                  };
-                } else if (item.path === "Track_Length_KM" || item.path === "Track_Length_Miles") {
-                  item.cellValueFormatFunction = function(params) {
-                    let value = Math.round(10 * params.value) / 10;
-                    return value ? value.toFixed(1).toString() : null;
-                  };
-                } else if (item.path === "Average_Speed_KMPH" || item.path === "Average_Speed_MPH") {
-                  item.cellValueFormatFunction = function(params) {
-                    var value = Math.round(100 * params.value) / 100;
-                    return value ? value.toFixed(2).toString() : null;
-                  };
-                } else if (item.path === "Pace_KM" || item.path === "Pace_MI") {
-                  item.cellValueFormatFunction = function(params) {
-                    var minutes = params.value;
-                    var pacemin = Math.floor(minutes);
-                    var pacesec = Math.round(60 * (minutes - pacemin)).toString().padStart(2, '0');;
-                    var prettyPace = pacemin + ":" + pacesec;
-                    return prettyPace ? prettyPace : null;
-                  };
-                } else {
-                  console.log("nope", item.path);
-                }
-              });
-            }
-          });
-          // done formatting columns
-		
-            const fastestBtn = document.getElementById("fastest");
-            const longestBtn = document.getElementById("longest");
-            //const timeTotalBtn = document.getElementById("timeTotal");
-            //const distanceTotalBtn = document.getElementById("distanceTotal");
-            const metricUnitsBtn = document.getElementById("metricUnits");
-            const imperialUnitsBtn = document.getElementById("imperialUnits");
-
-            // Wire up button click event listeners
-            fastestBtn.addEventListener("click", showFastestResults);
-            longestBtn.addEventListener("click", showLongestResults);
-            //timeTotalBtn.addEventListener("click", showTimeTotalResults);
-            //distanceTotalBtn.addEventListener("click", showDistanceTotalResults);
-            metricUnitsBtn.addEventListener("click", changeUnits);
-            imperialUnitsBtn.addEventListener("click", changeUnits);
-		  
-            // Fires when "fastest" button is clicked
-            function showFastestResults() {
-              // Sorts the table by speed and limits to runs over 5km
-              /////TODO featureLayer.definitionExpression = "Track_Length_KM >= 5";
-              if (metricUnitsBtn.checked) {
-                featureTable.sortColumn("Average_Speed_KMPH", "desc");
-              } else {
-                featureTable.sortColumn("Average_Speed_MPH", "desc");
-              }
-            }
-			
-            // Fires when "longest" button is clicked
-            function showLongestResults() {
-              // Sorts the table by distance
-              /////TODO featureLayer.definitionExpression = "*";
-              if (metricUnitsBtn.checked) {
-                featureTable.sortColumn("Track_Length_KM", "desc");
-              } else {
-                featureTable.sortColumn("Track_Length_Miles", "desc");
-              }
-            }
-			
-            // Fires when "timeTotal" button is clicked
-            function showTimeTotalResults() {
-              // Sorts the table by distance
-              view.goTo(featureLayer.fullExtent).catch(function(error) {
-                if (error.name != "AbortError") {
-                  console.error(error);
-                }
-              });
-            }
-			
-            // Fires when "distanceTotal" button is clicked
-            function showDistanceTotalResults() {
-              // Sorts the table by distance
-              view.goTo(featureLayer.fullExtent).catch(function(error) {
-                if (error.name != "AbortError") {
-                  console.error(error);
-                }
-              });
-            }
-		  		
-            //Change units used in display 
-            //  - Show distance, speed, and pace in km, elevation in m
-            //  - Show distance, speed, and pace in mi, elevation in ft
-            function changeUnits() {
-              if (metricUnitsBtn.checked) {
-                featureTable.showColumn("Track_Length_KM");
-                featureTable.showColumn("Average_Speed_KMPH");
-                featureTable.showColumn("Pace_KM");
-                featureTable.showColumn("Elevation_Gain_Meters");
-                featureTable.hideColumn("Track_Length_Miles");
-                featureTable.hideColumn("Average_Speed_MPH");
-                featureTable.hideColumn("Pace_MI");
-                featureTable.hideColumn("Elevation_Gain_Feet");
-              } else {
-                featureTable.hideColumn("Track_Length_KM");
-                featureTable.hideColumn("Average_Speed_KMPH");
-                featureTable.hideColumn("Pace_KM");
-                featureTable.hideColumn("Elevation_Gain_Meters");
-                featureTable.showColumn("Track_Length_Miles");
-                featureTable.showColumn("Average_Speed_MPH");
-                featureTable.showColumn("Pace_MI");
-                featureTable.showColumn("Elevation_Gain_Feet");
-              }
-            }		  
+      // Create the feature table
+      const featureTable = new FeatureTable({
+        layer: featureLayer,
+        // Autocast the FieldColumnConfigs
+        fieldConfigs: [{
+            name: "Participant_nickname",
+            label: "Runner"
+          },
+          {
+            name: "Track_Length_KM",
+            label: "Distance (km)",
+            direction: "desc"
+          },
+          {
+            name: "Average_Speed_KMPH",
+            label: "Speed (km/h)"
+          },
+          {
+            name: "Pace_KM",
+            label: "Pace (min/km)"
+          },
+          {
+            name: "Elevation_Gain_Meters",
+            label: "Elevation gain (m)"
+          },
+          {
+            name: "Track_Length_Miles",
+            label: "Distance (mi)",
+            direction: "desc",
+            visible: false
+          },
+          {
+            name: "Average_Speed_MPH",
+            label: "Speed (MPH)",
+            visible: false
+          },
+          {
+            name: "Pace_MI",
+            label: "Pace (min/mi)",
+            visible: false
+          },
+          {
+            name: "Elevation_Gain_Feet",
+            label: "Elevation gain (ft)",
+            visible: false
+          }
+        ],
+        container: document.getElementById("tableDiv")
       });
-    </script>
-  </head>
+      // Format the columns of results
+      watchUtils.watch(featureTable, "columns.length", function(length) {
+        if (length) {
+          featureTable.columns.items.forEach((item) => {
+            // Target a specific column
+            if (item.path !== "Participant_nickname") {
+              item.textAlign = "end";
+            }
+            if (item.path === "Elevation_Gain_Meters" || item.path === "Elevation_Gain_Feet") {
+              item.cellValueFormatFunction = function(params) {
+                return Math.round(params.value).toString();
+              };
+            } else if (item.path === "Track_Length_KM" || item.path === "Track_Length_Miles") {
+              item.cellValueFormatFunction = function(params) {
+                let value = Math.round(10 * params.value) / 10;
+                return value ? value.toFixed(1).toString() : null;
+              };
+            } else if (item.path === "Average_Speed_KMPH" || item.path === "Average_Speed_MPH") {
+              item.cellValueFormatFunction = function(params) {
+                var value = Math.round(100 * params.value) / 100;
+                return value ? value.toFixed(2).toString() : null;
+              };
+            } else if (item.path === "Pace_KM" || item.path === "Pace_MI") {
+              item.cellValueFormatFunction = function(params) {
+                var minutes = params.value;
+                var pacemin = Math.floor(minutes);
+                var pacesec = Math.round(60 * (minutes - pacemin)).toString().padStart(2, '0');;
+                var prettyPace = pacemin + ":" + pacesec;
+                return prettyPace ? prettyPace : null;
+              };
+            } else {
+              console.log("nope", item.path);
+            }
+          });
+        }
+      });
+      // done formatting columns
+      const fastestBtn = document.getElementById("fastest");
+      const longestBtn = document.getElementById("longest");
+      //const timeTotalBtn = document.getElementById("timeTotal");
+      //const distanceTotalBtn = document.getElementById("distanceTotal");
+      const metricUnitsBtn = document.getElementById("metricUnits");
+      const imperialUnitsBtn = document.getElementById("imperialUnits");
+      // Wire up button click event listeners
+      fastestBtn.addEventListener("click", showFastestResults);
+      longestBtn.addEventListener("click", showLongestResults);
+      //timeTotalBtn.addEventListener("click", showTimeTotalResults);
+      //distanceTotalBtn.addEventListener("click", showDistanceTotalResults);
+      metricUnitsBtn.addEventListener("click", changeUnits);
+      imperialUnitsBtn.addEventListener("click", changeUnits);
+      // Fires when "fastest" button is clicked
+      function showFastestResults() {
+        // Sorts the table by speed and limits to runs over 5km
+        /////TODO featureLayer.definitionExpression = "Track_Length_KM >= 5";
+        if (metricUnitsBtn.checked) {
+          featureTable.sortColumn("Average_Speed_KMPH", "desc");
+        } else {
+          featureTable.sortColumn("Average_Speed_MPH", "desc");
+        }
+      }
+      // Fires when "longest" button is clicked
+      function showLongestResults() {
+        // Sorts the table by distance
+        /////TODO featureLayer.definitionExpression = "*";
+        if (metricUnitsBtn.checked) {
+          featureTable.sortColumn("Track_Length_KM", "desc");
+        } else {
+          featureTable.sortColumn("Track_Length_Miles", "desc");
+        }
+      }
+      // Fires when "timeTotal" button is clicked
+      function showTimeTotalResults() {
+        // Sorts the table by distance
+        view.goTo(featureLayer.fullExtent).catch(function(error) {
+          if (error.name != "AbortError") {
+            console.error(error);
+          }
+        });
+      }
+      // Fires when "distanceTotal" button is clicked
+      function showDistanceTotalResults() {
+        // Sorts the table by distance
+        view.goTo(featureLayer.fullExtent).catch(function(error) {
+          if (error.name != "AbortError") {
+            console.error(error);
+          }
+        });
+      }
+      //Change units used in display 
+      //  - Show distance, speed, and pace in km, elevation in m
+      //  - Show distance, speed, and pace in mi, elevation in ft
+      function changeUnits() {
+        if (metricUnitsBtn.checked) {
+          featureTable.showColumn("Track_Length_KM");
+          featureTable.showColumn("Average_Speed_KMPH");
+          featureTable.showColumn("Pace_KM");
+          featureTable.showColumn("Elevation_Gain_Meters");
+          featureTable.hideColumn("Track_Length_Miles");
+          featureTable.hideColumn("Average_Speed_MPH");
+          featureTable.hideColumn("Pace_MI");
+          featureTable.hideColumn("Elevation_Gain_Feet");
+        } else {
+          featureTable.hideColumn("Track_Length_KM");
+          featureTable.hideColumn("Average_Speed_KMPH");
+          featureTable.hideColumn("Pace_KM");
+          featureTable.hideColumn("Elevation_Gain_Meters");
+          featureTable.showColumn("Track_Length_Miles");
+          featureTable.showColumn("Average_Speed_MPH");
+          featureTable.showColumn("Pace_MI");
+          featureTable.showColumn("Elevation_Gain_Feet");
+        }
+      }
+    });
+  </script>
+</head>
 
-  <body>
-    <div id="actions" class="esri-widget units">
-      <fieldset class="radio-group">
-        <legend class="radio-group-title">Units</legend>
-        <input type="radio" id="metricUnits" name="units" value="km" checked >
-        <label for="metricUnits">kilometers</label>
-        <input type="radio" id="imperialUnits" name="units" value="mi" >
-        <label for="imperialUnits">miles</label>
-      </fieldset>
-      <h4>Results</h4>
-      <button class="esri-button" id="fastest">Fastest 5k+ run results</button>
-      <button class="esri-button" id="longest">Longest run results</button>
-      <!--button class="esri-button" id="timeTotal">Time on feet results</button>
+<body>
+  <div id="actions" class="esri-widget units">
+    <fieldset class="radio-group">
+      <legend class="radio-group-title">Units</legend>
+      <input type="radio" id="metricUnits" name="units" value="km" checked>
+      <label for="metricUnits">kilometers</label>
+      <input type="radio" id="imperialUnits" name="units" value="mi">
+      <label for="imperialUnits">miles</label>
+    </fieldset>
+    <h4>Results</h4>
+    <button class="esri-button" id="fastest">Fastest 5k+ run results</button>
+    <button class="esri-button" id="longest">Longest run results</button>
+    <!--button class="esri-button" id="timeTotal">Time on feet results</button>
       <button class="esri-button" id="distanceTotal">Total distance results</button-->
-    </div>
+  </div>
 
-    <div class="container">
-      <div id="tableDiv"></div>
-    </div>
-  </body>
+  <div class="container">
+    <div id="tableDiv"></div>
+  </div>
+</body>
+
 </html>
