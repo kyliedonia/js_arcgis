@@ -44,18 +44,14 @@
       "esri/views/MapView",
       "esri/layers/FeatureLayer",
       "esri/widgets/FeatureTable",
-      "esri/widgets/Home",
-      "esri/geometry/Point",
-      "esri/geometry/Multipoint"
+      "esri/geometry/Point"
     ], function(
       WebMap,
       watchUtils,
       MapView,
       FeatureLayer,
       FeatureTable,
-      Home,
-      Point,
-      Multipoint
+      Point
     ) {
       const featureLayer = new FeatureLayer({
         url: "https://services2.arcgis.com/AhLa5Lu7BoubUElN/arcgis/rest/services/Fun_Run_(Dashboard_and_Stats_View)/FeatureServer/1"
@@ -236,9 +232,9 @@
       <input type="radio" id="imperialUnits" name="units" value="mi">
       <label for="imperialUnits">miles</label>
     </fieldset>
-    <h4>Results</h4>
+    <!--<h4>Results</h4>
     <button class="esri-button" id="fastest">Fastest 5k+ run results</button>
-    <button class="esri-button" id="longest">Longest run results</button>
+    <button class="esri-button" id="longest">Longest run results</button>-->
     <!--button class="esri-button" id="timeTotal">Time on feet results</button>
       <button class="esri-button" id="distanceTotal">Total distance results</button-->
   </div>
