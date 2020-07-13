@@ -111,11 +111,14 @@
       watchUtils.watch(featureTable, "columns.length", function(length) {
         if (length) {
           featureTable.columns.items.forEach((item) => {
-            // Target a specific column
             if (item.path !== "Participant_nickname") {
               item.textAlign = "end";
             }
-            if (item.path === "Elevation_Gain_Meters" || item.path === "Elevation_Gain_Feet") {
+            if (item.path === "Participant_nickname") {
+                item.cellValueFormatFunction = function(params) {
+                  return "<a target='_blank' href='http://apl.esri.com/jg/UC2020Run/index.html?globalID=" + params.rowData.item.feature.attributes.GlobalID + "'>" + params.value.toString() + "</a>";
+                };
+              } else if (item.path === "Elevation_Gain_Meters" || item.path === "Elevation_Gain_Feet") {
               item.cellValueFormatFunction = function(params) {
                 return Math.round(params.value).toString();
               };
