@@ -61,7 +61,7 @@
       const query = new Query({
         returnGeometry: false,
         outFields: ["Average_Speed_KMPH"],
-        where: "1=1", // "Track_Length_KM>=5",
+        where: "Track_Length_KM >= 5",
         cacheHint: true,
         orderByFields: ["Average_Speed_KMPH DESC"]
       });
