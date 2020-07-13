@@ -39,25 +39,41 @@
   </style>
   <script>
     require([
-      "esri/WebMap",
       "esri/core/watchUtils",
-      "esri/views/MapView",
       "esri/layers/FeatureLayer",
+      "esri/tasks/support/Query",
       "esri/widgets/FeatureTable",
-      "esri/geometry/Point"
+      "esri/widgets/FeatureTable/Grid/Column"
     ], function(
-      WebMap,
       watchUtils,
-      MapView,
       FeatureLayer,
+      Query,
       FeatureTable,
-      Point
+      Column
     ) {
       const featureLayer = new FeatureLayer({
         url: "https://services2.arcgis.com/AhLa5Lu7BoubUElN/arcgis/rest/services/Fun_Run_(Dashboard_and_Stats_View)/FeatureServer/1"
       });
       featureLayer.outFields = ["*"];
       featureLayer.title = "Results";
+      // RANK SECTION 1 START
+      let sortedSpeeds = [];
+      const query = new Query({
+        returnGeometry: false,
+        outFields: ["Average_Speed_KMPH"],
+        where: "1=1", // "Track_Length_KM>=5",
+        cacheHint: true,
+        orderByFields: ["Average_Speed_KMPH DESC"]
+      });
+      featureLayer.load().then(function() {
+        featureLayer.queryFeatures(query).then(function(results) {
+          const features = results.features;
+          sortedSpeeds = features.map(function(feature) {
+            return feature.attributes["Average_Speed_KMPH"];
+          });
+        });
+      });
+      // RANK SECTION 1 END
       // Create the feature table
       const featureTable = new FeatureTable({
         layer: featureLayer,
@@ -110,15 +126,40 @@
       // Format the columns of results
       watchUtils.watch(featureTable, "columns.length", function(length) {
         if (length) {
+          // RANK SECTION 2 START
+          const items = featureTable.columns.items;
+          // Don't add virtual column a second time
+          // Prevents infinite loop
+          if (items[items.length - 1].path === "virtual-column") {
+            return;
+          }
+          featureTable.columns.add(
+            new Column({
+              store: featureTable.viewModel.store,
+              sortable: false,
+              path: "virtual-column",
+              header: "Place (5K+)",
+              getCellValue: function(columnElement, rowData) {
+                const item = rowData.item;
+                const index = sortedSpeeds.indexOf(item.feature.attributes["Average_Speed_KMPH"]);
+                if (item.feature.attributes["Track_Length_KM"] >= 5) {
+                  return index !== undefined ? (index + 1).toString() : "no"; //index + 1 : "";
+                } else {
+                  return "n/a";
+                }
+              }
+            })
+          );
+          // RANK SECTION 2 END
           featureTable.columns.items.forEach((item) => {
             if (item.path !== "Participant_nickname") {
               item.textAlign = "end";
             }
             if (item.path === "Participant_nickname") {
-                item.cellValueFormatFunction = function(params) {
-                  return "<a target='_blank' href='http://apl.esri.com/jg/UC2020Run/index.html?globalID=" + params.rowData.item.feature.attributes.GlobalID + "'>" + params.value.toString() + "</a>";
-                };
-              } else if (item.path === "Elevation_Gain_Meters" || item.path === "Elevation_Gain_Feet") {
+              item.cellValueFormatFunction = function(params) {
+                return "<a target='_blank' href='http://apl.esri.com/jg/UC2020Run/index.html?globalID=" + params.rowData.item.feature.attributes.GlobalID + "'>" + params.value.toString() + "</a>";
+              };
+            } else if (item.path === "Elevation_Gain_Meters" || item.path === "Elevation_Gain_Feet") {
               item.cellValueFormatFunction = function(params) {
                 return Math.round(params.value).toString();
               };
