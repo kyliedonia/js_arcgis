@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+  <title>Ed Summit Welcome Soapbox Statements</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.16/esri/themes/light/main.css" />
+  <script src="https://js.arcgis.com/4.16/"></script>
+
+  <style>
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    #actions {
+      padding: 5px;
+    }
+
+    .container {
+      height: 70%;
+      width: 100%;
+    }
+  </style>
+  <script>
+    require([
+      "esri/layers/FeatureLayer",
+      "esri/tasks/support/Query"
+    ], function(
+      FeatureLayer,
+      Query
+    ) {
+      const featureLayer = new FeatureLayer({
+        url: "https://services3.arcgis.com/ixehHGhSDmBKeOyS/arcgis/rest/services/EdSummit2020_K12Welcome_WordCloud/FeatureServer/0"
+      });
+      featureLayer.outFields = ["GIS is important in education because..."];
+      featureLayer.title = "Results";
+      
+      var container = document.getElementById("container");
+      container.text = "TESTING";
+    });
+  </script>
+</head>
+
+<body>
+
+  <div class="container">
+    
+  </div>
+</body>
+
+</html>
