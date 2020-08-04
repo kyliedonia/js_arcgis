@@ -41,13 +41,15 @@
       featureLayer.title = "Results";
       
       var container = document.getElementById("container");
-      container.text = "TESTING";
+      if (container)
+        {container.innerHTML = 'some HTML';}
+      
     });
   </script>
 </head>
 
 <body>
-  <h3>Title A</h3>
+  <h3>Title B</h3>
   <div class="container" id="container">
     
   </div>
