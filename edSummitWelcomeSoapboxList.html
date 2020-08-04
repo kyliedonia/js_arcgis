@@ -1,58 +1,171 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>
+      Query features from a FeatureLayerView | Sample | ArcGIS API for
+      JavaScript 4.16
+    </title>
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
-  <title>Ed Summit Welcome Soapbox Statements</title>
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.16/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.16/"></script>
 
-  <link rel="stylesheet" href="https://js.arcgis.com/4.16/esri/themes/light/main.css" />
-  <script src="https://js.arcgis.com/4.16/"></script>
+    <script>
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer"
+      ], function (Map, MapView, FeatureLayer) {
+        const map = new Map({
+          basemap: "dark-gray"
+        });
 
-  <style>
-    html,
-    body {
-      height: 100%;
-      width: 100%;
-      margin: 0;
-      padding: 0;
-    }
-    #actions {
-      padding: 5px;
-    }
+        const view = new MapView({
+          container: "sceneDiv",
+          map: map,
+          zoom: 1,
+          padding: {
+            right: 300
+          }
+        });
 
-    .container {
-      height: 70%;
-      width: 100%;
-    }
-  </style>
-  <script>
-    require([
-      "esri/layers/FeatureLayer",
-      "esri/tasks/support/Query"
-    ], function(
-      FeatureLayer,
-      Query
-    ) {
-      const featureLayer = new FeatureLayer({
-        url: "https://services3.arcgis.com/ixehHGhSDmBKeOyS/arcgis/rest/services/EdSummit2020_K12Welcome_WordCloud/FeatureServer/0"
+        const listNode = document.getElementById("ed_in_gis_statements");
+
+        /********************
+         * Add feature layer
+         ********************/
+
+        // Create the FeatureLayer 
+        const featureLayer = new FeatureLayer({
+          url:
+            "https://services3.arcgis.com/ixehHGhSDmBKeOyS/arcgis/rest/services/EdSummit2020_K12Welcome_WordCloud/FeatureServer/0",
+          outFields: ["gis_important_because"] // used by queryFeatures
+        });
+        map.add(featureLayer);
+
+        let graphics;
+
+        view.whenLayerView(featureLayer).then(function (layerView) {
+          layerView.watch("updating", function (value) {
+            if (!value) {
+              // wait for the layer view to finish updating
+
+              // query all the features available for drawing.
+              layerView
+                .queryFeatures({
+                  //geometry: view.extent,
+                  returnGeometry: false
+                })
+                .then(function (results) {
+                  graphics = results.features;
+
+                  const fragment = document.createDocumentFragment();
+
+                  graphics.forEach(function (result, index) {
+                    const attributes = result.attributes;
+                    console.log(result.attributes[0]);
+                    const name = attributes.gis_important_because;
+
+                    // Create a list zip codes in NY
+                    const li = document.createElement("li");
+                    li.classList.add("panel-result");
+                    li.tabIndex = 0;
+                    li.setAttribute("data-result-id", index);
+                    li.textContent = name;
+
+                    fragment.appendChild(li);
+                  });
+                  // Empty the current list
+                  listNode.innerHTML = "";
+                  listNode.appendChild(fragment);
+                })
+                .catch(function (error) {
+                  console.error("query failed: ", error);
+                });
+            }
+          });
+        });
+
+        
       });
-      featureLayer.outFields = ["GIS is important in education because..."];
-      featureLayer.title = "Results";
-      
-      var container = document.getElementById("container");
-      if (container)
-        {container.innerHTML = 'some HTML';}
-      
-    });
-  </script>
-</head>
+    </script>
 
-<body>
-  <h3>Title B</h3>
-  <div class="container" id="container">
-    
-  </div>
-</body>
+    <style>
+      html,
+      body,
+      #sceneDiv {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
 
+      .panel-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .panel-side {
+        padding: 2px;
+        box-sizing: border-box;
+        width: 300px;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: #fff;
+        background-color: rgba(0, 0, 0, 0.6);
+        overflow: auto;
+        z-index: 60;
+      }
+
+      .panel-side h3 {
+        padding: 0 20px;
+        margin: 20px 0;
+      }
+
+      .panel-side ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .panel-side li {
+        list-style: none;
+        padding: 10px 20px;
+      }
+
+      .panel-result {
+        cursor: pointer;
+        margin: 2px 0;
+        background-color: rgba(0, 0, 0, 0.3);
+      }
+
+      .panel-result:hover,
+      .panel-result:focus {
+        color: orange;
+        background-color: rgba(0, 0, 0, 0.75);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="panel-container">
+      <div class="panel-side esri-widget">
+        <h3>GIS in Ed Soapbox Speaches</h3>
+        <ul id="ed_in_gis_statements">
+          <li>Loading&hellip;</li>
+        </ul>
+      </div>
+      <div id="sceneDiv"></div>
+    </div>
+  </body>
 </html>
