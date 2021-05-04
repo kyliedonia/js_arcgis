@@ -150,7 +150,7 @@
               item.cellValueFormatFunction = function(params) {
                 return "<a target='_blank' href='https://apl.bd.esri.com/UC2021Run/index.html?globalID=" + params.rowData.item.feature.attributes.GlobalID + "'>" + params.value.toString() + "</a>";
               };
-            else if (item.path === "distance_km" || item.path === "distance_mi") {
+            } else if (item.path === "distance_km" || item.path === "distance_mi") {
               item.cellValueFormatFunction = function(params) {
                 let value = Math.round(10 * params.value) / 10;
                 return value ? value.toFixed(1).toString() : null;
